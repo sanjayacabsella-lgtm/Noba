@@ -1,0 +1,29 @@
+import streamlit as st
+import google.generativeai as genai
+
+# පිටුවේ සැකසුම්
+st.set_page_config(page_title="My Gemini AI")
+st.title("Gemini AI Chat Bot")
+
+# ඔබේ API Key එක
+API_KEY = "AIzaSyANrugGXl_Fqa3GCPSHfhiO1_SN-4s0OqQ"
+
+genai.configure(api_key=API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if prompt := st.chat_input("මොනවද දැනගන්න ඕනේ?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        response = model.generate_content(prompt)
+        st.markdown(response.text)
+        st.session_state.messages.append({"role": "assistant", "content": response.text})
