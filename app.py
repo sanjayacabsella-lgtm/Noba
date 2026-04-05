@@ -1,53 +1,86 @@
 import streamlit as st
 import requests
 import io
+import json
 
-# පිටුවේ සැකසුම්
-st.set_page_config(page_title="Cloudflare AI Generator", page_icon="☁️")
+# පිටුවේ සැකසුම් (Page Settings)
+st.set_page_config(page_title="AI Art Studio", page_icon="🎨", layout="centered")
 
-st.title("☁️ Cloudflare Free Image Generator")
-st.write("Cloudflare Workers AI තාක්ෂණයෙන් නොමිලේ රූප සාදාගන්න.")
+st.title("🎨 AI Multi-Style Art Studio")
+st.write("ඔබට අවශ්‍ය රූපය ගැන ඉංග්‍රීසියෙන් ලියා, පහතින් කැමති කලා ශෛලිය (Style) තෝරන්න.")
 
-# ඔබේ විස්තර (ආරක්ෂිතව මෙතන තබා ඇත)
+# --- ආරක්‍ෂිත තොරතුරු (ඔබේ Cloudflare විස්තර) ---
+# **වැදගත්:** GitHub එකට දානකොට මේවා Secrets වල දාන්න.
 ACCOUNT_ID = "2974b71a6d3dab87c1216cfd085422c5"
 API_TOKEN = "cfut_9fnpPTBN8loKK136ol2v4vJ8mMolXDM4HcvQ165vc7b9f2a1"
 
-# Model එකේ URL එක
-# මෙහිදී 'stable-diffusion-xl-lightning' කියන model එක පාවිච්චි කරමු
-API_URL = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning"
+# --- Art Styles සහ Prompts ---
+styles = {
+    "Cartoon Style (Pixar)": {
+        "model": "@cf/lykon/dreamshaper-8-lcm",
+        "prompt_prefix": "3d render, Pixar style, Disney animation, cute character, high quality, vibrant colors, "
+    },
+    "Comic Book Style": {
+        "model": "@cf/lykon/dreamshaper-8-lcm",
+        "prompt_prefix": "comic book style, bold lines, colorful, graphic novel illustration, dramatic lighting, "
+    },
+    "Anime Style (Japanese)": {
+        "model": "@cf/lykon/dreamshaper-8-lcm",
+        "prompt_prefix": "anime style, vibrant colors, 2d illustration, studio ghibli style, detailed background, "
+    },
+    "Ultra Realistic": {
+        "model": "@cf/bytedance/stable-diffusion-xl-lightning",
+        "prompt_prefix": "ultra realistic, photorealistic, 8k, highly detailed, professional photography, cinematic, "
+    }
+}
 
-headers = {"Authorization": f"Bearer {API_TOKEN}"}
+# --- User Inputs ---
+# 1. Prompt
+user_prompt = st.text_input("Enter your request:", "A brave lion")
 
-# User input
-prompt = st.text_input("ඔබට අවශ්‍ය රූපය ගැන ඉංග්‍රීසියෙන් ලියන්න:", "A futuristic car in a neon city, high resolution, 8k")
+# 2. Select Style (Select Box)
+selected_style_name = st.selectbox("Select Art Style:", list(styles.keys()))
 
-if st.button("Generate Image"):
-    if prompt:
-        with st.spinner("Cloudflare AI රූපය නිර්මාණය කරමින් පවතී..."):
+# --- Generation Logic ---
+if st.button("Generate Art"):
+    if user_prompt:
+        # තෝරාගත් Style එකේ විස්තර ලබා ගැනීම
+        style_info = styles[selected_style_name]
+        
+        # අවසාන Prompt එක සැකසීම (Style Prefix + User Prompt)
+        final_prompt = style_info["prompt_prefix"] + user_prompt
+        
+        # Model URL එක සැකසීම
+        API_URL = f"https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/{style_info['model']}"
+        headers = {"Authorization": f"Bearer {API_TOKEN}"}
+        
+        with st.spinner(f"{selected_style_name} මගින් රූපය නිර්මාණය කරමින් පවතී..."):
             try:
-                # Cloudflare එකට request එක යැවීම
-                response = requests.post(
-                    API_URL, 
-                    headers=headers, 
-                    json={"prompt": prompt}
-                )
+                # Cloudflare API එකට Request එක යැවීම
+                # JSON data: prompt සහ negative prompt (optional)
+                json_data = {
+                    "prompt": final_prompt,
+                    "negative_prompt": "low quality, blurry, distorted, unrealistic eyes, bad anatomy"
+                }
+                
+                response = requests.post(API_URL, headers=headers, json=json_data)
                 
                 if response.status_code == 200:
                     # රූපය සාර්ථකව ලැබුණොත්
                     image_bytes = response.content
-                    st.image(image_bytes, caption=f"Result for: {prompt}", use_column_width=True)
+                    st.image(image_bytes, caption=f"{selected_style_name}: {user_prompt}", use_column_width=True)
                     
-                    # Download button එකක් ලබා දීම
+                    # Download button
                     st.download_button(
-                        label="Download Image",
+                        label="Download Art",
                         data=image_bytes,
-                        file_name="generated_image.png",
+                        file_name=f"{user_prompt.replace(' ', '_')}_{selected_style_name}.png",
                         mime="image/png"
                     )
                     st.success("සාර්ථකයි!")
                 else:
                     st.error(f"දෝෂයක් සිදු වුණා: {response.status_code}")
-                    st.write(response.json()) # දෝෂය කුමක්දැයි බැලීමට
+                    st.write(response.json())
                     
             except Exception as e:
                 st.error(f"Unexpected error: {e}")
