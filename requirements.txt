@@ -1,2 +1,10 @@
+
 streamlit
+groq
+huggingface_hub
 requests
+pillow
+edge-tts
+gTTS
+duckduckgo_search
+supabase
