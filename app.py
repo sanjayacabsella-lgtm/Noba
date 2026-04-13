@@ -2,9 +2,8 @@ import streamlit as st
 import requests
 import io
 
-# මගේ Private API Key එක (ඔබ වෙනුවෙන් මම මේක මෙතැන දානවා)
-# මේක පාවිච්චි කරලා ඕනෑම ප්‍රමාණයක් පින්තූර හදන්න පුළුවන්
-API_KEY = "sk-04988710892243e887e12c1d55688566"
+# 
+API_KEY = "sk-jwcbzyfeqvklmbgbqtksrugwbuulrknkthlmaaesxcdefntl"
 
 def generate_image(prompt):
     url = "https://api.siliconflow.cn/v1/images/generations"
