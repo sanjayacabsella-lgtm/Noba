@@ -3,7 +3,7 @@ import requests
 
 # ඔබේ Cloudflare විස්තර මෙතැනට දාන්න
 CLOUDFLARE_ACCOUNT_ID = "2974b71a6d3dab87c1216cfd085422c5"
-CLOUDFLARE_API_TOKEN = "cfut_JtGoaPSHK7IVKToYyvE1HCPbo68d44qV4HuHac5a394e401a"
+CLOUDFLARE_API_TOKEN = "cfat_p4kEdb7MYrPDFbknGZQEw4aMIiIrMrrzLabJux6x622e899c"
 
 def generate_image_cloudflare(prompt):
     url = f"https://api.cloudflare.com/client/v4/accounts/{CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning"
