@@ -2,37 +2,37 @@ import streamlit as st
 from gradio_client import Client
 import os
 
-# ඇප් එකේ මාතෘකාව
-st.title("AI Video Generator")
+st.set_page_config(page_title="Alpha Video Engine", layout="wide")
+st.title("🚀 Alpha Instant Video (No API Key)")
 
-# පියවර 1: පරිශීලකයාගෙන් Prompt එක ලබා ගැනීම
-prompt = st.text_input("ඔබට අවශ්‍ය වීඩියෝව ගැන විස්තර කරන්න:", placeholder="A futuristic robot in a neon city...")
+prompt = st.text_input("ඔබේ වීඩියෝ විස්තරය මෙහි ලියන්න:", placeholder="A cinematic shot of a robot in a rain forest...")
 
-if st.button("Generate Video"):
+if st.button("Generate Video Now"):
     if prompt:
         try:
-            with st.spinner("වීඩියෝව නිර්මාණය වෙමින් පවතී... විනාඩි කිහිපයක් ගත විය හැක."):
-                # පියවර 2: Gradio Client හරහා Free GPU Space එකකට සම්බන්ධ වීම
-                # මෙහි Wan 2.1 හෝ වෙනත් ඕනෑම Space එකක නම ලබාදිය හැකියි
-                client = Client("Wan-AI/Wan2.1-T2V-14B")
+            with st.spinner("AI මාදිලියට සම්බන්ධ වෙමින් පවතී... පෝලිම් පරීක්ෂා කරයි..."):
+                # මෙතනදී අපි පාවිච්චි කරන්නේ Public Space එකක්. 
+                # මෙය API Key එකක් ඉල්ලන්නේ නැත.
+                # සටහන: මෙම URL එක කාලෙන් කාලෙට වෙනස් විය හැක.
+                client = Client("fffiloni/stable-video-diffusion") 
+
+                st.info("පෝලිමේ සිටී නම් කරුණාකර රැඳී සිටින්න. මෙය 100% නොමිලේ ක්‍රමයකි.")
                 
-                # පියවර 3: වීඩියෝව Generate කිරීම
                 result = client.predict(
+                    input_video=None, # Text to Video සඳහා මෙය හිස්ව තබන්න
                     prompt=prompt,
-                    api_name="/predict"
+                    api_name="/video_gen" # Space එකේ ඇති API endpoint එක
                 )
                 
-                # result වල එන්නේ වීඩියෝ ගොනුව තාවකාලිකව පවතින path එකයි
-                video_path = result
-                
-                # පියවර 4: වීඩියෝව පෙන්වීම
-                if os.path.exists(video_path):
-                    st.success("වීඩියෝව සාර්ථකව නිර්මාණය කළා!")
-                    st.video(video_path)
+                # වීඩියෝව පෙන්වීම
+                if result:
+                    st.success("වීඩියෝව සූදානම්!")
+                    st.video(result)
                 else:
-                    st.error("වීඩියෝ ගොනුව සොයා ගැනීමට නොහැකි විය.")
+                    st.error("වීඩියෝව සෑදීමට නොහැකි විය. පසුව උත්සාහ කරන්න.")
                     
         except Exception as e:
-            st.error(f"දෝෂයක් සිදු විය: {e}")
+            st.error(f"Error: {e}")
+            st.info("සමහර විට මෙම Space එක අධික කාර්යබහුල විය හැක. වෙනත් Public Space එකක් පාවිච්චි කර බලමු.")
     else:
-        st.warning("කරුණාකර යම් විස්තරයක් (prompt) ඇතුළත් කරන්න.")
+        st.warning("කරුණාකර Prompt එකක් ඇතුළත් කරන්න.")
