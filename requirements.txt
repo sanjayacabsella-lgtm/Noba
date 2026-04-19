@@ -1,4 +1,3 @@
-
 streamlit
 groq
 huggingface_hub
@@ -8,3 +7,4 @@ edge-tts
 gTTS
 duckduckgo_search
 supabase
+gradio_client
