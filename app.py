@@ -1,30 +1,22 @@
 import streamlit as st
-import requests
-import io
-from PIL import Image
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 
-st.title("🚀 Alpha Instant Engine")
+def create_custom_video(user_text):
+    # ඔබේ repository එකේ ඇති base වීඩියෝවක් පාවිච්චි කරන්න
+    clip = VideoFileClip("car_background.mp4").subclip(0, 5)
+    
+    # යූසර් ගහපු text එක වීඩියෝ එක උඩින් දැමීම
+    txt_clip = TextClip(user_text, fontsize=70, color='white', font='Arial-Bold')
+    txt_clip = txt_clip.set_pos('center').set_duration(5)
+    
+    # වීඩියෝව සහ ටෙක්ස්ට් එක එකතු කිරීම
+    video = CompositeVideoClip([clip, txt_clip])
+    video.write_videofile("output.mp4", fps=24)
+    return "output.mp4"
 
-# පෝලිම් නැතිව සහ API Key නැතිව වැඩ කරන රහස් URL එකක්
-# මෙය Hugging Face හි 'Serverless Inference' තාක්ෂණය භාවිතා කරයි
-API_URL = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell"
+st.title("Alpha Code-Based Video Creator")
+user_input = st.text_input("මොනවාද වීඩියෝවේ පෙන්වන්න ඕනේ?")
 
-def generate_ai_content(prompt):
-    # කිසිම API Key එකක් අවශ්‍ය නොවන පරිදි ඉල්ලීම යැවීම
-    response = requests.post(API_URL, json={"inputs": prompt})
-    return response.content
-
-prompt = st.text_input("ඔබට අවශ්‍ය දේ ලියන්න (උදා: a flying car):")
-
-if st.button("Generate Now"):
-    if prompt:
-        with st.spinner("පෝලිම් පරීක්ෂා කරමින්... තත්පර කිහිපයකින් ලැබෙනු ඇත..."):
-            try:
-                content = generate_ai_content(prompt)
-                image = Image.open(io.BytesIO(content))
-                st.image(image, caption="Alpha විසින් නිපදවන ලදී", use_column_width=True)
-                st.success("සාර්ථකයි! පෝලිම මඟහැරියා.")
-            except Exception as e:
-                st.error("දැනට සර්වර් එක කාර්යබහුලයි. තත්පර 10කින් නැවත උත්සාහ කරන්න.")
-    else:
-        st.warning("කරුණාකර යමක් ඇතුළත් කරන්න.")
+if st.button("Create Video"):
+    result = create_custom_video(user_input)
+    st.video(result)
