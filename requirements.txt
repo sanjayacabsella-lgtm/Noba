@@ -1,4 +1,3 @@
-moviepy
 streamlit
 groq
 huggingface_hub
@@ -9,3 +8,5 @@ gTTS
 duckduckgo_search
 supabase
 gradio_client
+imageio-ffmpeg
+moviepy
