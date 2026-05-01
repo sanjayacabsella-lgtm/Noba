@@ -10,3 +10,4 @@ supabase
 gradio_client
 imageio-ffmpeg
 moviepy
+openai
