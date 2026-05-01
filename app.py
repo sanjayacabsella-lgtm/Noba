@@ -13,7 +13,7 @@ except:
 
 # Gemini 1.5 Flash සඳහා GitHub Models Endpoint එක
 ENDPOINT = "https://models.inference.ai.azure.com"
-MODEL_NAME = "Gemini-2.5-Flash" # GitHub Models වල ඇති නම
+MODEL_NAME = "Claude-3-5-Sonnet" # GitHub Models වල ඇති නම
 
 client = OpenAI(
     base_url=ENDPOINT,
