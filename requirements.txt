@@ -11,3 +11,4 @@ gradio_client
 imageio-ffmpeg
 moviepy
 openai
+github
