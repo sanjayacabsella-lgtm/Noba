@@ -1,14 +1,4 @@
 streamlit
-groq
-huggingface_hub
-requests
-pillow
-edge-tts
-gTTS
-duckduckgo_search
-supabase
-gradio_client
-imageio-ffmpeg
-moviepy
 openai
 PyGithub
+requests
