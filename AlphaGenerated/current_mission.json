@@ -1,0 +1,54 @@
+{
+    "mission_name": "Alpha_Generated_Level",
+    "weather_settings": {"type": "Rainy", "time": "Night"},
+    "actors": [
+        {
+            "class": "BP_Player_Vehicle_C",
+            "transform": {"loc": [0, 0, 0], "rot": [0, 0, 0]}
+        },
+        {
+            "class": "BP_Police_Interceptor_C",
+            "transform": {"loc": [-200, 50, 0], "rot": [0, 0, 0]}
+        },
+        {
+            "class": "BP_Police_Interceptor_C",
+            "transform": {"loc": [-200, -50, 0], "rot": [0, 0, 0]}
+        },
+        {
+            "class": "BP_Police_Interceptor_C",
+            "transform": {"loc": [-250, 0, 0], "rot": [0, 0, 0]}
+        },
+        {
+            "class": "BP_Civ_Car_Generic_C",
+            "transform": {"loc": [-500, 0, 0], "rot": [0, 0, 10]}
+        },
+        {
+            "class": "BP_MetaHuman_Base_C",
+            "transform": {"loc": [50, -100, 0], "rot": [0, 0, 45]}
+        },
+        {
+            "class": "BP_MetaHuman_Base_C",
+            "transform": {"loc": [-50, -100, 0], "rot": [0, 0, -45]}
+        },
+        {
+            "class": "BP_MetaHuman_Base_C",
+            "transform": {"loc": [0, -120, 0], "rot": [0, 0, 90]}
+        },
+        {
+            "class": "BP_Lighting_NeonStreetLight",
+            "transform": {"loc": [100, 50, 500], "rot": [0, 0, 0]}
+        },
+        {
+            "class": "BP_Lighting_NeonStreetLight",
+            "transform": {"loc": [-100, 50, 500], "rot": [0, 180, 0]}
+        },
+        {
+            "class": "BP_Lighting_NeonStreetLight",
+            "transform": {"loc": [0, 100, 500], "rot": [0, 90, 0]}
+        },
+        {
+            "class": "BP_Lighting_NeonStreetLight",
+            "transform": {"loc": [0, -100, 500], "rot": [0, -90, 0]}
+        }
+    ]
+}
