@@ -1,10 +1,10 @@
 import streamlit as st
 import time
 
-# පිටුවේ මුලික සැකසුම් (ලස්සනට පෙනෙන්න Wide Layout දානවා)
+# 1. පිටුවේ මුලික සැකසුම් (ලස්සනට පෙනෙන්න Wide Layout දානවා)
 st.set_page_config(page_title="Nexo App Gallery", page_icon="🎮", layout="wide")
 
-# Custom CSS වලින් ටිකක් high-tech look එකක් දෙමු
+# 2. Custom CSS වලින් high-tech dark look එකක් දෙමු
 st.markdown("""
     <style>
     .main { background-color: #0e1117; }
@@ -12,10 +12,10 @@ st.markdown("""
     .stButton>button:hover { background-color: #cc3333; }
     .storage-box { padding: 20px; border-radius: 10px; background-color: #1e293b; border: 1px solid #334155; }
     </style>
-""", unsafe_allowed_html=True)
+""", unsafe_allow_html=True) # මෙතන තිබ්බ වැරැද්ද දැන් හැදුවා!
 
-# 1. SIDEBAR DESIGN (යූසර්ගේ විස්තර සහ Storage එක)
-st.sidebar.image("https://img.icons8.com/nolan/128/cyber-security.png", width=80) # Nexo Protect Logo එකක් වගේ
+# 3. SIDEBAR DESIGN (යූසර්ගේ විස්තර සහ Storage එක)
+st.sidebar.image("https://img.icons8.com/nolan/128/cyber-security.png", width=80) # Nexo Protect Logo
 st.sidebar.title("Nexo Dashboard")
 st.sidebar.write("---")
 
@@ -34,7 +34,7 @@ st.sidebar.write("---")
 st.sidebar.info("⚙️ Server Node: Amazon AWS EC2\n\n🟢 Status: ONLINE (Free Tier)")
 
 
-# 2. MAIN PAGE DESIGN
+# 4. MAIN PAGE DESIGN
 st.title("🎮 Nexo App Gallery")
 st.write("ලැප්ටොප් එක ඕෆ් කරලා තිබ්බත් AWS සර්වර් එකෙන් පැය 24ම වැඩ කරන ලංකාවේ ප්‍රථම Cloud Gaming ප්ලැට්ෆෝම් එක.")
 st.write("---")
@@ -44,7 +44,7 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.header("Step 1: Upload Your Game/App")
-    st.write("ඔයාගේ ගේම් එක මෙතනට දාන්න. ඒක ඔයාගේ **නොමිලේ ලැබුණු 20GB ටෙලිග්‍රෑම් Cloud** එකේ සේව් වෙනවා.")
+    st.write("ඔයාගේ ගේම් එක මෙතනට දාන්න. ඒක ඔයාගේ **නොමිලේ ලැබුණු 20GB ටෙලිග්‍රෑම් Cloud** එකේ සේဝ် වෙනවා.")
     
     uploaded_file = st.file_uploader("Choose a game file (.zip, .apk, .exe)", type=["zip", "apk", "exe"])
     
@@ -84,6 +84,6 @@ with col2:
             
         st.success(f"🟢 Connected! {game_choice} සර්වර් එක මත සාර්ථකව රන් වෙනවා. (Rs. 100/mo Pack Active)")
         
-        # AWS සර්වර් එකෙන් එන වීඩියෝ ස්ට්‍රීම් එක (Demo එකක් විදිහට අපි HTML Frame එකක් දාමු)
-        # ඇත්තටම Free Fire ස්ට්‍රීම් එකක් වගේ පේන්න අපි ලස්සන 3D Gameplay වීඩියෝ ලින්ක් එකක් මෙතනට දානවා
-        st.video("https://www.youtube.com/watch?v=dQw4w9WgXcQ") # මෙතනට AWS එකෙන් එන Stream Link එක පස්සේ දාන්න පුළුවන්
+        # AWS සර්වර් එකෙන් එන වීඩියෝ ස්ට්‍රීම් එක (Demo එකක් විදිහට පෙන්වීමට)
+        # මෙතනට Free Fire ප්ලේ වෙන ලස්සන Free Fire Gaming වීඩියෝ එකක් දැම්මා
+        st.video("https://www.youtube.com/watch?v=Fst6F08h_4A")
