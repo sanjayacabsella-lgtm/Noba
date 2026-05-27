@@ -1,89 +1,136 @@
 import streamlit as st
-import time
+import os
+from groq import Groq
+from moviepy.editor import VideoFileClip
+import json
 
-# 1. පිටුවේ මුලික සැකසුම් (ලස්සනට පෙනෙන්න Wide Layout දානවා)
-st.set_page_config(page_title="Nexo App Gallery", page_icon="🎮", layout="wide")
+# Mobile-friendly Page Configuration
+st.set_page_config(page_title="AI Smart Video Clipper", page_icon="🎬", layout="centered")
 
-# 2. Custom CSS වලින් high-tech dark look එකක් දෙමු
-st.markdown("""
-    <style>
-    .main { background-color: #0e1117; }
-    .stButton>button { width: 100%; background-color: #ff4b4b; color: white; border-radius: 8px; font-weight: bold; }
-    .stButton>button:hover { background-color: #cc3333; }
-    .storage-box { padding: 20px; border-radius: 10px; background-color: #1e293b; border: 1px solid #334155; }
-    </style>
-""", unsafe_allow_html=True) # මෙතන තිබ්බ වැරැද්ද දැන් හැදුවා!
+st.title("🎬 AI Smart Video Clipper")
+st.write("වීඩියෝවක් ලබා දී, ඔබට අවශ්‍ය කොටස Prompt එකකින් පවසන්න. (High-Speed Optimized)")
 
-# 3. SIDEBAR DESIGN (යූසර්ගේ විස්තර සහ Storage එක)
-st.sidebar.image("https://img.icons8.com/nolan/128/cyber-security.png", width=80) # Nexo Protect Logo
-st.sidebar.title("Nexo Dashboard")
-st.sidebar.write("---")
+# Sidebar for Groq API Key
+groq_api_key = st.sidebar.text_input("Groq API Key එක ඇතුළත් කරන්න:", type="password")
 
-# ටෙලිග්‍රෑම් 20GB Storage එක මෙතන පෙන්වනවා
-st.sidebar.subheader("📁 Nexo Drive (Telegram Cloud)")
-MAX_STORAGE = 20.0 # 20GB Free
-if "used_space" not in st.session_state:
-    st.session_state.used_space = 0.0
+if groq_api_key:
+    # Initialize Groq Client
+    client = Groq(api_key=groq_api_key)
 
-available_space = MAX_STORAGE - st.session_state.used_space
-st.sidebar.progress(st.session_state.used_space / MAX_STORAGE)
-st.sidebar.write(f"**Used:** {st.session_state.used_space:.2f} GB / {MAX_STORAGE} GB")
-st.sidebar.write(f"**Free Space:** {available_space:.2f} GB")
+    # 1. Video Upload Component
+    uploaded_file = st.file_input("ඔබේ වීඩියෝව මෙතැනට Upload කරන්න (MP4):", type=["mp4"])
 
-st.sidebar.write("---")
-st.sidebar.info("⚙️ Server Node: Amazon AWS EC2\n\n🟢 Status: ONLINE (Free Tier)")
-
-
-# 4. MAIN PAGE DESIGN
-st.title("🎮 Nexo App Gallery")
-st.write("ලැප්ටොප් එක ඕෆ් කරලා තිබ්බත් AWS සර්වර් එකෙන් පැය 24ම වැඩ කරන ලංකාවේ ප්‍රථම Cloud Gaming ප්ලැට්ෆෝම් එක.")
-st.write("---")
-
-# පේජ් එක කොටස් (Columns) 2කට බෙදමු
-col1, col2 = st.columns([1, 1])
-
-with col1:
-    st.header("Step 1: Upload Your Game/App")
-    st.write("ඔයාගේ ගේම් එක මෙතනට දාන්න. ඒක ඔයාගේ **නොමිලේ ලැබුණු 20GB ටෙලිග්‍රෑම් Cloud** එකේ සේဝ် වෙනවා.")
-    
-    uploaded_file = st.file_uploader("Choose a game file (.zip, .apk, .exe)", type=["zip", "apk", "exe"])
-    
     if uploaded_file is not None:
-        file_size_gb = uploaded_file.size / (1024 * 1024 * 1024) # Bytes to GB
+        # Save uploaded file temporarily
+        with open("temp_video.mp4", "wb") as f:
+            f.write(uploaded_file.getbuffer())
         
-        if st.session_state.used_space + file_size_gb <= MAX_STORAGE:
-            st.success(f"✔️ '{uploaded_file.name}' සාර්ථකව Nexo Drive එකට ඇතුලත් කරගත්තා!")
-            if st.button("Save to Telegram Storage"):
-                with st.spinner("Telegram බොට් එක හරහා සර්වර් එකට අප්ලෝඩ් වෙමින් පවතී..."):
-                    time.sleep(2) # Upload වෙන බව පෙන්වීමට ඩිලේ එකක්
-                    st.session_state.used_space += file_size_gb
-                    st.balloons()
-                    st.success("සාර්ථකව සේව් වුණා! දැන් ඔබට මේක AWS එකෙන් රන් කරන්න පුළුවන්.")
-        else:
-            st.error("❌ ඉඩ මදි! ඔබේ 20GB නොමිලේ ලැබෙන සීමාව ඉක්මවා යයි.")
+        st.video("temp_video.mp4")
+        st.success("වීඩියෝව සාර්ථකව Upload විය!")
 
-with col2:
-    st.header("Step 2: Nexo Cloud Run (AWS Server)")
-    st.write("ගේම් එක සර්වර් එක මත ධාවනය කරන්න. ඔබේ දුරකථනයේ හෝ පරිගණකයේ කිසිදු ඉඩක් හෝ RAM එකක් වැය නොවේ.")
-    
-    # දැනට තියෙන Heavy Games ටිකක් තෝරන්න දෙනවා
-    game_choice = st.selectbox("සර්වර් එකෙන් ප්ලේ කරන්න ඕන ගේම් එක තෝරන්න:", ["Free Fire", "PUBG Mobile", "Custom Uploaded Game"])
-    
-    st.write("---")
-    st.write("### 🖥️ Nexo Streaming Display")
-    
-    # Play බටන් එක
-    if st.button(f"🚀 Run {game_choice} on AWS Cloud"):
-        st.warning("Connecting to Amazon AWS EC2 Instance via WebRTC...")
-        
-        # ගේම් එක ලෝඩ් වෙනකම් පොඩි ඇනිමේෂන් එකක්
-        progress_bar = st.progress(0)
-        for i in range(100):
-            time.sleep(0.02)
-            progress_bar.progress(i + 1)
-            
-        st.success(f"🟢 Connected! {game_choice} සර්වර් එක මත සාර්ථකව රන් වෙනවා. (Rs. 100/mo Pack Active)")
-        
-        # AWS සර්වර් එකෙන් එන වීඩියෝ ස්ට්‍රීම් එක (Demo එකක් විදිහට පෙන්වීමට)
-        # මෙතනට Free Fire ප්ලේ වෙන ලස්සන Free Fire Gaming වීඩියෝ එකක් දැම්මා
-        st.video("https://www.youtube.com/watch?v=Fst6F08h_4A")
+        # 2. User Prompt Input
+        user_prompt = st.text_input("ඔබට කට් කර ගැනීමට අවශ්‍ය කුමන කොටසද? (उदा: 'ඇල්බට් අයින්ස්ටයින් ගැන කියන කොටස')", "")
+
+        if st.button("AI Cut වීඩියෝව සාදන්න 🚀"):
+            if user_prompt:
+                # --- STEP 1: AUDIO EXTRACTION ---
+                with st.spinner("පළමුව වීඩියෝවේ Audio එක වෙන් කරමින් පවතී..."):
+                    try:
+                        video_clip = VideoFileClip("temp_video.mp4")
+                        video_clip.audio.write_audiofile("temp_audio.mp3", logger=None)
+                        video_clip.close()
+                    except Exception as e:
+                        st.error(f"Audio Extraction Error: {e}")
+                        st.stop()
+
+                # --- STEP 2: WHISPER SPEECH-TO-TEXT ---
+                with st.spinner("AI මඟින් වීඩියෝවේ කතාව කියවමින් පවතී (Transcribing)..."):
+                    try:
+                        with open("temp_audio.mp3", "rb") as audio_file:
+                            transcript_response = client.audio.transcriptions.create(
+                                file=("temp_audio.mp3", audio_file.read()),
+                                model="whisper-large-v3",
+                                response_format="verbose_json"
+                            )
+                        
+                        segments = transcript_response.segments
+                        formatted_transcript = "".join([f"[{s['start']}s - {s['end']}s]: {s['text']}\n" for s in segments])
+                        os.remove("temp_audio.mp3") # Clean up audio file
+                    except Exception as e:
+                        st.error(f"Whisper Transcription Error: {e}")
+                        st.stop()
+
+                # --- STEP 3: LLM TIMESTAMP DETECTION ---
+                with st.spinner("ඔබේ Prompt එක අනුව අවශ්‍ය කොටස AI එක මඟින් සොයමින් පවතී..."):
+                    try:
+                        llm_prompt = f"""
+                        You are an expert video editor. I will give you a transcript of a video with timestamps and a user request.
+                        Your job is to find the exact 'start_time' and 'end_time' from the transcript that best matches the user's request.
+
+                        Transcript:
+                        {formatted_transcript}
+
+                        User Request: {user_prompt}
+
+                        Provide your response ONLY as a raw JSON object with 'start' and 'end' keys (values in seconds as float). Do not include any thinking or extra text.
+                        Example format: {{"start": 12.5, "end": 45.2}}
+                        """
+
+                        chat_completion = client.chat.completions.create(
+                            messages=[{"role": "user", "content": llm_prompt}],
+                            model="llama3-8b-8192",
+                            temperature=0.0
+                        )
+
+                        response_text = chat_completion.choices[0].message.content.strip()
+                        time_data = json.loads(response_text)
+                        
+                        start_sec = float(time_data['start'])
+                        end_sec = float(time_data['end'])
+                        
+                        st.info(f"🎯 AI තීරණය: තත්පර {start_sec} සිට තත්පර {end_sec} දක්වා කොටස.")
+                    except Exception as e:
+                        st.error(f"AI Timestamp Detection Error: {e}")
+                        st.stop()
+
+                # --- STEP 4: HIGH-SPEED VIDEO RENDERING ---
+                with st.spinner("MoviePy මඟින් වීඩියෝව High-Speed Render වෙමින් පවතී..."):
+                    try:
+                        main_clip = VideoFileClip("temp_video.mp4")
+                        trimmed_clip = main_clip.subclip(start_sec, end_sec)
+                        
+                        # Optimization Settings: 
+                        # preset='ultrafast' (Rendering වේගය 5 ගුණයකින් වැඩි කරයි)
+                        # threads=4 (Server එකේ CPU Cores 4ක් එකවර පාවිච්චි කරයි)
+                        trimmed_clip.write_videofile(
+                            "output_short.mp4", 
+                            codec="libx264", 
+                            audio_codec="aac", 
+                            preset="ultrafast", 
+                            threads=4, 
+                            logger=None
+                        )
+                        main_clip.close()
+                        trimmed_clip.close()
+                        
+                        st.success("ඔබේ වීඩියෝව සාර්ථකව සූදානම් කර ඇත! 🎉")
+                        st.video("output_short.mp4")
+
+                        # Mobile-friendly Download Button
+                        with open("output_short.mp4", "rb") as file:
+                            st.download_button(
+                                label="වීඩියෝව Phone එකට Download කරගන්න 📥",
+                                data=file,
+                                file_name="ai_short.mp4",
+                                mime="video/mp4"
+                            )
+                        
+                        # Clean up output file after rendering
+                        os.remove("output_short.mp4")
+                        
+                    except Exception as e:
+                        st.error(f"Video Rendering Error: {e}")
+            else:
+                st.warning("කරුණාකර ඔබට අවශ්‍ය කොටස පිළිබඳ Prompt එකක් ඇතුළත් කරන්න.")
+else:
+    st.info("වැඩේ පටන් ගන්න Groq API Key එක Sidebar එකට ලබාදෙන්න.")
